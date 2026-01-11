@@ -1,8 +1,9 @@
 'use client';
 
-import type { User } from '@/types';
+import type { User, Alert } from '@/types';
 import { useRouter } from 'next/navigation';
 import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react';
+import { alerts as initialAlerts } from '@/lib/data';
 
 // Mock users database
 const MOCK_USERS: User[] = [
@@ -18,6 +19,9 @@ const MOCK_PASSWORDS: Record<string, string> = {
 interface AuthContextType {
   user: User | null;
   loading: boolean;
+  alerts: Alert[];
+  addAlert: (alert: Alert) => void;
+  deleteAlert: (alertId: string) => void;
   login: (email: string, pass: string) => Promise<boolean>;
   logout: () => void;
   register: (name: string, email: string, pass: string) => Promise<boolean>;
@@ -28,6 +32,7 @@ const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
 export function AuthProvider({ children }: { children: ReactNode }) {
   const [user, setUser] = useState<User | null>(null);
+  const [alerts, setAlerts] = useState<Alert[]>(initialAlerts);
   const [loading, setLoading] = useState(true);
   const router = useRouter();
 
@@ -95,8 +100,16 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     }
   };
 
+  const addAlert = (alert: Alert) => {
+    setAlerts(prevAlerts => [alert, ...prevAlerts]);
+  };
 
-  const value = { user, loading, login, logout, register, updateUser };
+  const deleteAlert = (alertId: string) => {
+    setAlerts(prevAlerts => prevAlerts.filter(a => a.id !== alertId));
+  }
+
+
+  const value = { user, loading, alerts, addAlert, deleteAlert, login, logout, register, updateUser };
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
 }

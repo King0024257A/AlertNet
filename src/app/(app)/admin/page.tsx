@@ -4,7 +4,6 @@ import { Header } from '@/components/header';
 import { useAuth } from '@/contexts/auth-context';
 import { redirect } from 'next/navigation';
 import { useState, useEffect } from 'react';
-import { alerts as initialAlerts } from '@/lib/data';
 import type { Alert } from '@/types';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
@@ -25,8 +24,7 @@ import {
 } from '@/components/ui/alert-dialog';
 
 export default function AdminPage() {
-  const { user, loading } = useAuth();
-  const [alerts, setAlerts] = useState<Alert[]>(initialAlerts);
+  const { user, loading, alerts, deleteAlert } = useAuth();
   const { toast } = useToast();
 
   useEffect(() => {
@@ -40,7 +38,7 @@ export default function AdminPage() {
   }
   
   const handleDelete = (id: string) => {
-    setAlerts(prevAlerts => prevAlerts.filter(alert => alert.id !== id));
+    deleteAlert(id);
     toast({
         title: 'Alert Deleted',
         description: `Alert with ID ${id} has been removed.`,

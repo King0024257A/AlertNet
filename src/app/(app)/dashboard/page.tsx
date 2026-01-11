@@ -1,11 +1,14 @@
-import { alerts } from '@/lib/data';
+'use client';
+
 import { AlertCard } from '@/components/alert-card';
 import { Header } from '@/components/header';
 import { Button } from '@/components/ui/button';
 import Link from 'next/link';
 import { PlusCircle } from 'lucide-react';
+import { useAuth } from '@/contexts/auth-context';
 
 export default function DashboardPage() {
+  const { alerts } = useAuth();
   const verifiedAlerts = alerts.filter(alert => alert.isVerified);
 
   return (

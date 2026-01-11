@@ -28,7 +28,6 @@ import { useRouter } from 'next/navigation';
 import { useAuth } from '@/contexts/auth-context';
 import { Loader2 } from 'lucide-react';
 import { verifyDisasterImage } from '@/ai/flows/verify-disaster-image';
-import { alerts } from '@/lib/data'; // Mock data import
 
 const formSchema = z.object({
   title: z.string().min(5, { message: 'Title must be at least 5 characters.' }),
@@ -39,7 +38,7 @@ const formSchema = z.object({
 });
 
 export function CreateAlertForm() {
-  const { user } = useAuth();
+  const { user, addAlert } = useAuth();
   const { toast } = useToast();
   const router = useRouter();
   const [loading, setLoading] = useState(false);
@@ -79,7 +78,6 @@ export function CreateAlertForm() {
         });
 
         if (verificationResult.isDisaster) {
-          // In a real app, this would be an API call to your backend.
           const newAlert = {
             id: String(Date.now()),
             title: values.title,
@@ -92,7 +90,7 @@ export function CreateAlertForm() {
             timestamp: new Date(),
             isVerified: true,
           };
-          alerts.unshift(newAlert); // Add to mock data
+          addAlert(newAlert);
 
           toast({
             title: '✅ Alert Verified & Created!',
