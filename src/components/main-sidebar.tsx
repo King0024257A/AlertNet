@@ -17,6 +17,7 @@ import {
   User,
   Shield,
   LogOut,
+  BarChart2,
 } from 'lucide-react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
@@ -26,6 +27,7 @@ import { Button } from './ui/button';
 const menuItems = [
   { href: '/dashboard', label: 'Dashboard', icon: LayoutDashboard },
   { href: '/create-alert', label: 'Create Alert', icon: Siren },
+  { href: '/analytics', label: 'Analytics', icon: BarChart2 },
   { href: '/emergency-contacts', label: 'Contacts', icon: Phone },
   { href: '/profile', label: 'Profile', icon: User },
 ];
