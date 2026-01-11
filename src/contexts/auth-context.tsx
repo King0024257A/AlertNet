@@ -20,6 +20,7 @@ const ALERTS_STORAGE_KEY = 'alertnet-alerts';
 
 interface AuthContextType {
   user: User | null;
+  allUsers: User[];
   loading: boolean;
   alerts: Alert[];
   addAlert: (alert: Alert) => void;
@@ -170,7 +171,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     }
   }
 
-  const value = { user, loading, alerts, addAlert, deleteAlert, login, logout, register, updateUser };
+  const value = { user, allUsers: MOCK_USERS, loading, alerts, addAlert, deleteAlert, login, logout, register, updateUser };
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
 }
