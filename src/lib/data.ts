@@ -64,8 +64,12 @@ export const alerts: Alert[] = [
 ];
 
 export const emergencyContacts: EmergencyContact[] = [
-  { id: '1', name: 'National Emergency Number', phone: '911' },
-  { id: '2', name: 'Police (Non-Emergency)', phone: '311' },
-  { id: '3', name: 'Fire Department (Non-Emergency)', phone: ' (555) 123-4567' },
-  { id: '4', name: 'Poison Control', phone: '1-800-222-1222' },
+  { id: '1', name: 'National Emergency Helpline', phone: '112' },
+  { id: '2', name: 'Police', phone: '100' },
+  { id: '3', name: 'Fire', phone: '101' },
+  { id: '4', name: 'Ambulance', phone: '102' },
+  { id: '5', name: 'Disaster Management Services', phone: '108' },
+  { id: '6', name: 'Women Helpline', phone: '1091' },
+  { id: '7', name: 'Child Helpline', phone: '1098' },
+  { id: '8', name: 'LPG Leak Helpline', phone: '1906' },
 ];
