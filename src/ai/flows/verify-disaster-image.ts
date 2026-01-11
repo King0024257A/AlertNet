@@ -24,6 +24,9 @@ export type VerifyDisasterImageInput = z.infer<typeof VerifyDisasterImageInputSc
 const VerifyDisasterImageOutputSchema = z.object({
   isDisaster: z.boolean().describe('Whether or not the image represents a real micro-disaster.'),
   reason: z.string().describe('The AI\u0027s reasoning for its determination.'),
+  title: z.string().describe('A short, descriptive title for the disaster.'),
+  severity: z.enum(['Low', 'Medium', 'High']).describe('The severity of the disaster.'),
+  description: z.string().describe('A detailed description of the disaster.'),
 });
 export type VerifyDisasterImageOutput = z.infer<typeof VerifyDisasterImageOutputSchema>;
 
@@ -42,6 +45,8 @@ You will analyze the provided image and description to determine if it represent
 Consider factors such as the severity of the situation, the presence of visible damage or disruption, and the likelihood of a genuine emergency.
 
 Based on your analysis, set the isDisaster output field to true if you believe it is a real micro-disaster, and false otherwise.
+
+If it is a disaster, generate a concise title, a detailed description, and a severity level ('Low', 'Medium', 'High').
 
 Explain your reasoning for your determination in the reason output field.
 

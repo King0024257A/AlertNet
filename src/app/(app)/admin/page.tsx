@@ -3,8 +3,7 @@
 import { Header } from '@/components/header';
 import { useAuth } from '@/contexts/auth-context';
 import { redirect } from 'next/navigation';
-import { useState, useEffect } from 'react';
-import type { Alert } from '@/types';
+import { useEffect } from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { Badge } from '@/components/ui/badge';
@@ -90,7 +89,7 @@ export default function AdminPage() {
                                 <TableCell>
                                     <AlertDialog>
                                         <AlertDialogTrigger asChild>
-                                            <Button variant="ghost" size="icon">
+                                            <Button variant="ghost" size="icon" disabled={user?.role !== 'admin'}>
                                                 <Trash2 className="h-4 w-4 text-destructive" />
                                             </Button>
                                         </AlertDialogTrigger>

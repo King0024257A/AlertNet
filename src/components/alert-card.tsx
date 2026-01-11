@@ -1,3 +1,4 @@
+'use client';
 import {
   Card,
   CardContent,
@@ -11,12 +12,23 @@ import type { Alert } from '@/types';
 import Image from 'next/image';
 import { cn } from '@/lib/utils';
 import { formatDistanceToNow } from 'date-fns';
-import { MapPin, User, Clock } from 'lucide-react';
+import { MapPin, User, Clock, Trash2 } from 'lucide-react';
+import { Button } from './ui/button';
+import { useAuth } from '@/contexts/auth-context';
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from '@/components/ui/alert-dialog';
 
 interface AlertCardProps {
   alert: Alert;
-  isAdmin?: boolean;
-  onDelete?: (id: string) => void;
 }
 
 const severityColors = {
@@ -26,9 +38,11 @@ const severityColors = {
 };
 
 export function AlertCard({ alert }: AlertCardProps) {
+  const { user, deleteAlert } = useAuth();
+
   return (
     <Card className="flex flex-col overflow-hidden">
-      <CardHeader className="p-0">
+      <CardHeader className="relative p-0">
         <div className="relative h-48 w-full">
           <Image
             src={alert.imageUrl}
@@ -49,7 +63,32 @@ export function AlertCard({ alert }: AlertCardProps) {
         </div>
       </CardHeader>
       <CardContent className="flex-grow p-4">
-        <CardTitle className="mb-2 font-headline text-lg">{alert.title}</CardTitle>
+        <div className="flex items-start justify-between">
+          <CardTitle className="mb-2 font-headline text-lg">{alert.title}</CardTitle>
+           {user?.role === 'admin' && (
+             <AlertDialog>
+                <AlertDialogTrigger asChild>
+                    <Button variant="ghost" size="icon">
+                        <Trash2 className="h-4 w-4 text-destructive" />
+                    </Button>
+                </AlertDialogTrigger>
+                <AlertDialogContent>
+                    <AlertDialogHeader>
+                        <AlertDialogTitle>Are you sure?</AlertDialogTitle>
+                        <AlertDialogDescription>
+                            This action cannot be undone. This will permanently delete the alert.
+                        </AlertDialogDescription>
+                    </AlertDialogHeader>
+                    <AlertDialogFooter>
+                        <AlertDialogCancel>Cancel</AlertDialogCancel>
+                        <AlertDialogAction onClick={() => deleteAlert(alert.id)} className='bg-destructive hover:bg-destructive/90'>
+                            Delete
+                        </AlertDialogAction>
+                    </AlertDialogFooter>
+                </AlertDialogContent>
+            </AlertDialog>
+           )}
+        </div>
         <CardDescription>{alert.description}</CardDescription>
       </CardContent>
       <CardFooter className="flex flex-col items-start gap-2 bg-muted/50 p-4 text-sm text-muted-foreground">

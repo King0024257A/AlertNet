@@ -14,14 +14,6 @@ import {
   FormMessage,
 } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
-import { Textarea } from '@/components/ui/textarea';
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from '@/components/ui/select';
 import { useState } from 'react';
 import { useToast } from '@/hooks/use-toast';
 import { useRouter } from 'next/navigation';
@@ -30,10 +22,7 @@ import { Loader2 } from 'lucide-react';
 import { verifyDisasterImage } from '@/ai/flows/verify-disaster-image';
 
 const formSchema = z.object({
-  title: z.string().min(5, { message: 'Title must be at least 5 characters.' }),
   location: z.string().min(5, { message: 'Location must be at least 5 characters.' }),
-  severity: z.enum(['Low', 'Medium', 'High']),
-  description: z.string().min(10, { message: 'Description must be at least 10 characters.' }),
   photo: z.any().refine(file => file?.length > 0, 'An image is required.'),
 });
 
@@ -46,10 +35,7 @@ export function CreateAlertForm() {
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
-      title: '',
       location: '',
-      severity: 'Low',
-      description: '',
     },
   });
 
@@ -74,16 +60,16 @@ export function CreateAlertForm() {
       try {
         const verificationResult = await verifyDisasterImage({
           photoDataUri,
-          description: values.description,
+          description: "User submitted image for disaster verification.", // Generic description
         });
 
         if (verificationResult.isDisaster) {
           const newAlert = {
             id: String(Date.now()),
-            title: values.title,
-            description: values.description,
+            title: verificationResult.title,
+            description: verificationResult.description,
             location: values.location,
-            severity: values.severity,
+            severity: verificationResult.severity,
             imageUrl: URL.createObjectURL(file), // Using local URL for display
             imageHint: 'custom alert',
             reportedBy: user.name,
@@ -132,64 +118,12 @@ export function CreateAlertForm() {
       <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
         <FormField
           control={form.control}
-          name="title"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>Alert Title</FormLabel>
-              <FormControl>
-                <Input placeholder="e.g., Fallen tree on Main St" {...field} />
-              </FormControl>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
-        <FormField
-          control={form.control}
           name="location"
           render={({ field }) => (
             <FormItem>
               <FormLabel>Location</FormLabel>
               <FormControl>
                 <Input placeholder="City, State, or specific address" {...field} />
-              </FormControl>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
-        <FormField
-          control={form.control}
-          name="severity"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>Severity</FormLabel>
-              <Select onValueChange={field.onChange} defaultValue={field.value}>
-                <FormControl>
-                  <SelectTrigger>
-                    <SelectValue placeholder="Select a severity level" />
-                  </SelectTrigger>
-                </FormControl>
-                <SelectContent>
-                  <SelectItem value="Low">Low</SelectItem>
-                  <SelectItem value="Medium">Medium</SelectItem>
-                  <SelectItem value="High">High</SelectItem>
-                </SelectContent>
-              </Select>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
-        <FormField
-          control={form.control}
-          name="description"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>Description</FormLabel>
-              <FormControl>
-                <Textarea
-                  placeholder="Provide details about the incident."
-                  className="resize-none"
-                  {...field}
-                />
               </FormControl>
               <FormMessage />
             </FormItem>
@@ -204,7 +138,7 @@ export function CreateAlertForm() {
               <FormControl>
                 <Input type="file" accept="image/*" onChange={(e) => field.onChange(e.target.files)} />
               </FormControl>
-              <FormDescription>The image will be analyzed by AI to verify the disaster.</FormDescription>
+              <FormDescription>The image will be analyzed by AI to verify the disaster and generate details.</FormDescription>
               <FormMessage />
             </FormItem>
           )}
