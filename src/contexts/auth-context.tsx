@@ -2,7 +2,7 @@
 
 import type { User, Alert } from '@/types';
 import { useRouter } from 'next/navigation';
-import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react';
+import React, { createContext, useContext, useState, useEffect, ReactNode, useCallback } from 'react';
 import { alerts as initialAlerts } from '@/lib/data';
 
 // Mock users database
@@ -15,6 +15,8 @@ const MOCK_PASSWORDS: Record<string, string> = {
   'demo@gmail.com': 'demo@0123',
   'admin@gmail.com': 'admin@0426',
 };
+
+const ALERTS_STORAGE_KEY = 'alertnet-alerts';
 
 interface AuthContextType {
   user: User | null;
@@ -32,10 +34,11 @@ const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
 export function AuthProvider({ children }: { children: ReactNode }) {
   const [user, setUser] = useState<User | null>(null);
-  const [alerts, setAlerts] = useState<Alert[]>(initialAlerts);
+  const [alerts, setAlerts] = useState<Alert[]>([]);
   const [loading, setLoading] = useState(true);
   const router = useRouter();
 
+  // Effect for handling user authentication state
   useEffect(() => {
     try {
       const storedUser = sessionStorage.getItem('alertnet-user');
@@ -48,6 +51,49 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     } finally {
       setLoading(false);
     }
+  }, []);
+
+  // Effect for loading and syncing alerts from localStorage
+  useEffect(() => {
+    const getAlertsFromStorage = () => {
+      try {
+        const storedAlerts = localStorage.getItem(ALERTS_STORAGE_KEY);
+        if (storedAlerts) {
+          // Parse dates correctly from JSON
+          const parsedAlerts: Alert[] = JSON.parse(storedAlerts).map((alert: any) => ({
+            ...alert,
+            timestamp: new Date(alert.timestamp),
+          }));
+          setAlerts(parsedAlerts);
+        } else {
+          // Initialize with default data if nothing is in storage
+          localStorage.setItem(ALERTS_STORAGE_KEY, JSON.stringify(initialAlerts));
+          setAlerts(initialAlerts);
+        }
+      } catch (error) {
+        console.error('Failed to access or parse alerts from localStorage', error);
+        setAlerts(initialAlerts);
+      }
+    };
+
+    getAlertsFromStorage();
+
+    // Listen for changes in other tabs
+    const handleStorageChange = (event: StorageEvent) => {
+      if (event.key === ALERTS_STORAGE_KEY && event.newValue) {
+         const parsedAlerts: Alert[] = JSON.parse(event.newValue).map((alert: any) => ({
+            ...alert,
+            timestamp: new Date(alert.timestamp),
+          }));
+        setAlerts(parsedAlerts);
+      }
+    };
+
+    window.addEventListener('storage', handleStorageChange);
+
+    return () => {
+      window.removeEventListener('storage', handleStorageChange);
+    };
   }, []);
 
   const login = async (email: string, pass: string): Promise<boolean> => {
@@ -101,13 +147,28 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   };
 
   const addAlert = (alert: Alert) => {
-    setAlerts(prevAlerts => [alert, ...prevAlerts]);
+     try {
+      const currentAlerts = JSON.parse(localStorage.getItem(ALERTS_STORAGE_KEY) || '[]') as Alert[];
+      const newAlerts = [alert, ...currentAlerts];
+      localStorage.setItem(ALERTS_STORAGE_KEY, JSON.stringify(newAlerts));
+      // Update state for current tab
+      setAlerts(newAlerts.map(a => ({...a, timestamp: new Date(a.timestamp)})));
+    } catch (error) {
+      console.error('Failed to add alert to localStorage', error);
+    }
   };
 
   const deleteAlert = (alertId: string) => {
-    setAlerts(prevAlerts => prevAlerts.filter(a => a.id !== alertId));
+    try {
+      const currentAlerts = JSON.parse(localStorage.getItem(ALERTS_STORAGE_KEY) || '[]') as Alert[];
+      const newAlerts = currentAlerts.filter(a => a.id !== alertId);
+      localStorage.setItem(ALERTS_STORAGE_KEY, JSON.stringify(newAlerts));
+       // Update state for current tab
+      setAlerts(newAlerts.map(a => ({...a, timestamp: new Date(a.timestamp)})));
+    } catch (error) {
+        console.error('Failed to delete alert from localStorage', error);
+    }
   }
-
 
   const value = { user, loading, alerts, addAlert, deleteAlert, login, logout, register, updateUser };
 
