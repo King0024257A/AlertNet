@@ -1,3 +1,34 @@
 {
-  "placeholderImages": []
+  "placeholderImages": [
+    {
+      "id": "fire-1",
+      "description": "A small fire in a residential area.",
+      "imageUrl": "https://images.unsplash.com/photo-1519373533972-d0fc32881b46?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw3fHxob3VzZSUyMGZpcmV8ZW58MHx8fHwxNzY4MTE5NjA3fDA&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "house fire"
+    },
+    {
+      "id": "flood-1",
+      "description": "A street flooded after heavy rain.",
+      "imageUrl": "https://images.unsplash.com/photo-1657069343871-fd1476990d04?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwyfHxzdHJlZXQlMjBmbG9vZHxlbnwwfHx8fDE3NjgxMTk2MDd8MA&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "street flood"
+    },
+    {
+      "id": "pothole-1",
+      "description": "A large pothole on a busy road.",
+      "imageUrl": "https://images.unsplash.com/photo-1636367167117-1c584316f6eb?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw3fHxyb2FkJTIwcG90aG9sZXxlbnwwfHx8fDE3NjgwNDk4MjB8MA&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "road pothole"
+    },
+    {
+      "id": "tree-1",
+      "description": "A fallen tree blocking a sidewalk.",
+      "imageUrl": "https://images.unsplash.com/photo-1591497108596-436c1a1a5c8e?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwxfHxmYWxsZW4lMjB0cmVlfGVufDB8fHx8MTc2ODExOTYwN3ww&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "fallen tree"
+    },
+    {
+      "id": "powerline-1",
+      "description": "A downed power line after a storm.",
+      "imageUrl": "https://picsum.photos/seed/powerline1/600/400",
+      "imageHint": "downed powerline"
+    }
+  ]
 }
